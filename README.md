@@ -1,0 +1,2 @@
+amq-openshift-cartridge
+=======================
