@@ -1,0 +1,157 @@
+#!/bin/bash
+source $OPENSHIFT_CARTRIDGE_SDK_BASH
+
+AMQ_BIN_DIR=${OPENSHIFT_AMQ_DIR}/container/bin
+AMQ_PID_FILE=${OPENSHIFT_AMQ_DIR}/container/instances/instance.properties
+AMQ_PASSWD_FILE=${OPENSHIFT_AMQ_DIR}/container/etc/passwd
+AMQ_USRPROPS_FILE=${OPENSHIFT_AMQ_DIR}/container/etc/users.properties
+AMQ_SYSPROPS_FILE=${OPENSHIFT_AMQ_DIR}/container/etc/system.properties
+
+function setup() {
+	client_result "Setting up fabric container"
+
+	# Retrieve password
+	if [ -z "${OPENSHIFT_AMQ_PASSWORD:-}" ]; then
+		# generate password and setup env vars
+		client_result "Generating password"
+		export OPENSHIFT_AMQ_PASSWORD=$(generate_password)
+		echo OPENSHIFT_AMQ_PASSWORD > ${OPENSHIFT_AMQ_DIR}/env/OPENSHIFT_AMQ_PASSWORD
+	fi
+	
+	# Store password
+	echo "" > $AMQ_USRPROPS_FILE
+	echo "admin=${OPENSHIFT_AMQ_PASSWORD},admin" > $AMQ_USRPROPS_FILE
+	echo "${OPENSHIFT_AMQ_PASSWORD}" > $AMQ_PASSWD_FILE
+
+	client_result ""
+	client_result "AMQ created successfully.  Please make note of these credentials:"
+	client_result ""
+	client_result "   Console URL:        http://${OPENSHIFT_GEAR_DNS}"
+	client_result "   Console User:       admin"
+	client_result "   Console Password:   ${OPENSHIFT_AMQ_PASSWORD}"
+	client_result ""
+	client_result "   The AMQ Management Console will be available shortly at: http://${OPENSHIFT_GEAR_DNS}"
+	client_result ""
+
+	# add_domain_env_var "OPENSHIFT_AMQ_DOMAIN_ZOOKEEPER_URL=${OPENSHIFT_AMQ_ZOOKEEPER_URL}"
+	# add_domain_env_var "OPENSHIFT_AMQ_DOMAIN_ZOOKEEPER_PASSWORD=${OPENSHIFT_AMQ_PASSWORD}"
+
+	cart_props "username=admin"
+	cart_props "password=${OPENSHIFT_AMQ_PASSWORD}"
+		
+	${AMQ_BIN_DIR}/start
+	wait_for_start    
+	
+	echo "true" > $FABRIC_CHECKER
+}
+
+function start() {
+	if [ ! -f $FABRIC_CHECKER ]; then
+		setup
+	else
+		${AMQ_BIN_DIR}/start
+		wait_for_start    
+	fi
+    client_result "Started JBoss AMQ cart"
+}
+
+function stop() {
+    PID=`cat $AMQ_PID_FILE | grep "item.0.pid" | awk -F " = " '{print $2}'`
+    ${AMQ_BIN_DIR}/stop
+    for i in {1..20};
+        do
+            if ps -p $PID > /dev/null; then
+                echo "Fabric has been successfully stopped"
+                break
+            else
+                sleep 3
+            fi
+        done
+    client_result "Stopped JBoss AMQ cart"
+}
+
+function restart() {
+    if is_running; then
+        stop
+    fi
+    start
+}
+
+function status() {
+   if is_running; then
+      client_result "Application is running"
+   else
+      client_result "Application is either stopped or inaccessible"
+   fi
+}
+
+function reload() {
+    client_message "Reloading JBoss AMQ cart"
+    restart
+}
+
+function tidy() {
+  client_message "Emptying log dir: $OPENSHIFT_AMQ_LOG_DIR"
+  shopt -s dotglob
+  rm -rf $OPENSHIFT_AMQ_LOG_DIR/*
+}
+
+function is_running() {
+   #Check if instance file exists
+   if [ ! -f $AMQ_PID_FILE ]; then
+      return 1
+   fi
+
+   #Check if pid exists
+   PID=`cat $AMQ_PID_FILE | grep "item.0.pid" | awk -F " = " '{print $2}'`
+   if [ "$PID" = "" ]; then
+      return 1
+   elif ps -p $PID > /dev/null; then
+      return 0
+   else
+      return 1
+   fi
+}
+
+function wait_for_start() {
+  for i in {1..20};
+     do
+       if [ ! -f $AMQ_PID_FILE ]; then
+         sleep 1
+       else
+         break
+       fi
+     done
+   if [ -f $AMQ_PID_FILE ]; then
+      for j in {1..20};
+         do
+           PID=`cat $AMQ_PID_FILE | grep "item.0.pid" | awk -F "=" '{print $2}'`
+           if [ "$PID" = "" ]; then
+             sleep 1
+           else
+            break
+           fi
+     done
+     if ps -p $PID > /dev/null; then
+       client_result "Fabric($PID) is started successfully"
+     else
+       client_error "Command Failed: JBoss AMQ process ($PID) is not running"
+     fi
+   else
+    client_error "Command Failed:Could not find JBoss AMQ instance.properties"
+   fi
+}
+
+function deploy() {
+}
+
+case "$1" in
+  deploy)    deploy ;;
+  start)     start ;;
+  stop)      stop ;;
+  restart)   restart ;;
+  status)    status ;;
+  reload)    reload ;;
+  tidy)      tidy ;;
+  *)         exit 0
+esac
