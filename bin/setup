@@ -2,10 +2,6 @@
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
 version=6.1.0.redhat-328
 
-case "$1" in
-  -v|--version)
-    version="$2"
-esac
 echo "$version" > "$OPENSHIFT_AMQ_DIR/env/OPENSHIFT_AMQ_VERSION"
 
 #Download and extract the JBoss AMQ Distribution
