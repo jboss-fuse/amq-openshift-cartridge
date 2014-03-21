@@ -11,8 +11,10 @@ echo "$version" > "$OPENSHIFT_AMQ_DIR/env/OPENSHIFT_AMQ_VERSION"
 #Download and extract the JBoss AMQ Distribution
 mkdir -p $OPENSHIFT_AMQ_DIR
 cd $OPENSHIFT_AMQ_DIR
+
 curl --write-out %{http_code} --silent --output jboss-a-${version}.zip \
-https://repository.jboss.org/nexus/content/repositories/ea/org/jboss/amq/jboss-a-mq/${version}./jboss-a-mq-${version}.zip
+   https://repository.jboss.org/nexus/content/repositories/ea/org/jboss/amq/jboss-a-mq/${version}/jboss-a-mq-${version}.zip
+
 unzip jboss-a-mq-${version}.zip
 ln -s jboss-a-mq-${version} container
 
