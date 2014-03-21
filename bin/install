@@ -2,8 +2,8 @@
 
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
-# Copy the version specific files into diy directory
-cd $OPENSHIFT_AMQ_DIR/versions/$OPENSHIFT_AMQ_VERSION
+# Copy the version specific files into directory
+cd $OPENSHIFT_AMQ_DIR/versions/6.1.0
 for i in */* ; do
   if [[ $i == *.erb ]]; then
     erb $i > $OPENSHIFT_AMQ_DIR/container/${i%.*}
