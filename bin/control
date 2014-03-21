@@ -143,6 +143,7 @@ function wait_for_start() {
 }
 
 function deploy() {
+  echo "deployed"
 }
 
 case "$1" in
