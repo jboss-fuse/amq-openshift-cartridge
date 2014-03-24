@@ -6,9 +6,10 @@ AMQ_PID_FILE=${OPENSHIFT_AMQ_DIR}/container/instances/instance.properties
 AMQ_PASSWD_FILE=${OPENSHIFT_AMQ_DIR}/container/etc/passwd
 AMQ_USRPROPS_FILE=${OPENSHIFT_AMQ_DIR}/container/etc/users.properties
 AMQ_SYSPROPS_FILE=${OPENSHIFT_AMQ_DIR}/container/etc/system.properties
+SETUP_CHECKER=${OPENSHIFT_AMQ_DIR}/container/etc/amq-configured
 
 function setup() {
-	client_result "Setting up fabric container"
+	client_result "Setting up JBoss AMQ"
 
 	# Retrieve password
 	if [ -z "${OPENSHIFT_AMQ_PASSWORD:-}" ]; then
@@ -42,11 +43,11 @@ function setup() {
 	${AMQ_BIN_DIR}/start
 	wait_for_start    
 	
-	echo "true" > $FABRIC_CHECKER
+	echo "true" > $SETUP_CHECKER
 }
 
 function start() {
-	if [ ! -f $FABRIC_CHECKER ]; then
+	if [ ! -f $SETUP_CHECKER ]; then
 		setup
 	else
 		${AMQ_BIN_DIR}/start
