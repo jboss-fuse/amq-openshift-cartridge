@@ -42,6 +42,10 @@ function setup() {
 	client_result "   The AMQ Management Console will be available shortly at: http://${OPENSHIFT_GEAR_DNS}"
 	client_result ""
 
+  client_result "SSL self signed certificate: "
+  client_result `keytool -exportcert -keystore "${AMQ_KEYSTORE_FILE}" -alias ${OPENSHIFT_GEAR_DNS} -storepass "${OPENSHIFT_AMQ_PASSWORD}" --rfc`
+  client_result ""
+
 	# add_domain_env_var "OPENSHIFT_AMQ_DOMAIN_ZOOKEEPER_URL=${OPENSHIFT_AMQ_ZOOKEEPER_URL}"
 	# add_domain_env_var "OPENSHIFT_AMQ_DOMAIN_ZOOKEEPER_PASSWORD=${OPENSHIFT_AMQ_PASSWORD}"
 
