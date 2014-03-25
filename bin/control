@@ -33,18 +33,14 @@ function setup() {
   echo "truststore.password=${OPENSHIFT_AMQ_PASSWORD}" >> $AMQ_BROKER_PROPERTIES_FILE
   CERT=`keytool -exportcert -keystore "${AMQ_KEYSTORE_FILE}" -alias ${OPENSHIFT_GEAR_DNS} -storepass "${OPENSHIFT_AMQ_PASSWORD}" --rfc`
 
-	client_result ""
 	client_result "AMQ created successfully.  Please make note of these credentials:"
 	client_result ""
 	client_result "   Console URL:        http://${OPENSHIFT_GEAR_DNS}"
 	client_result "   Console User:       admin"
 	client_result "   Console Password:   ${OPENSHIFT_AMQ_PASSWORD}"
 	client_result ""
-	client_result "   The AMQ Management Console will be available shortly at: http://${OPENSHIFT_GEAR_DNS}"
-	client_result ""
   client_result "SSL self signed certificate: "
-  #client_result "$CERT"
-  client_result ""
+  client_result "$CERT"
 
 	# add_domain_env_var "OPENSHIFT_AMQ_DOMAIN_ZOOKEEPER_URL=${OPENSHIFT_AMQ_ZOOKEEPER_URL}"
 	# add_domain_env_var "OPENSHIFT_AMQ_DOMAIN_ZOOKEEPER_PASSWORD=${OPENSHIFT_AMQ_PASSWORD}"
