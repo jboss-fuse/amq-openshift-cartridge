@@ -31,6 +31,7 @@ function setup() {
   echo "" >> $AMQ_BROKER_PROPERTIES_FILE
   echo "keystore.password=${OPENSHIFT_AMQ_PASSWORD}" >> $AMQ_BROKER_PROPERTIES_FILE
   echo "truststore.password=${OPENSHIFT_AMQ_PASSWORD}" >> $AMQ_BROKER_PROPERTIES_FILE
+  cert = `keytool -exportcert -keystore "${AMQ_KEYSTORE_FILE}" -alias ${OPENSHIFT_GEAR_DNS} -storepass "${OPENSHIFT_AMQ_PASSWORD}" --rfc`
 
 	client_result ""
 	client_result "AMQ created successfully.  Please make note of these credentials:"
@@ -41,9 +42,8 @@ function setup() {
 	client_result ""
 	client_result "   The AMQ Management Console will be available shortly at: http://${OPENSHIFT_GEAR_DNS}"
 	client_result ""
-
   client_result "SSL self signed certificate: "
-  client_result `keytool -exportcert -keystore "${AMQ_KEYSTORE_FILE}" -alias ${OPENSHIFT_GEAR_DNS} -storepass "${OPENSHIFT_AMQ_PASSWORD}" --rfc`
+  client_result "$cert"
   client_result ""
 
 	# add_domain_env_var "OPENSHIFT_AMQ_DOMAIN_ZOOKEEPER_URL=${OPENSHIFT_AMQ_ZOOKEEPER_URL}"
@@ -74,7 +74,7 @@ function stop() {
     for i in {1..20};
         do
             if ps -p $PID > /dev/null; then
-                echo "Fabric has been successfully stopped"
+                echo "JBoss AMQ has been successfully stopped"
                 break
             else
                 sleep 3
@@ -146,7 +146,7 @@ function wait_for_start() {
            fi
      done
      if ps -p $PID > /dev/null; then
-       client_result "Fabric($PID) is started successfully"
+       client_result "JBoss AMQ($PID) is started successfully"
      else
        client_error "Command Failed: JBoss AMQ process ($PID) is not running"
      fi
