@@ -86,15 +86,15 @@
 -->    
 
         <transportConnectors>
-            <transportConnector name="openwire"     uri="tcp://${OPENSHIFT_AMQ_IP}:${OPENSHIFT_AMQ_OPENWIRE_PORT}"/>
-            <transportConnector name="mqtt"         uri="mqtt://${OPENSHIFT_AMQ_IP}:${OPENSHIFT_AMQ_MQTT_PORT}"/>
-            <transportConnector name="amqp"         uri="mqtt://${OPENSHIFT_AMQ_IP}:${OPENSHIFT_AMQ_AMQP_PORT}"/>
-            <transportConnector name="stomp"        uri="stomp://${OPENSHIFT_AMQ_IP}:${OPENSHIFT_AMQ_STOMP_PORT}"/>
+            <transportConnector name="openwire"     uri="tcp://<%= ENV['OPENSHIFT_AMQ_IP'] %>:<%= ENV['OPENSHIFT_AMQ_OPENWIRE_PORT'] %>"/>
+            <transportConnector name="mqtt"         uri="mqtt://<%= ENV['OPENSHIFT_AMQ_IP'] %>:<%= ENV['OPENSHIFT_AMQ_MQTT_PORT'] %>"/>
+            <transportConnector name="amqp"         uri="mqtt://<%= ENV['OPENSHIFT_AMQ_IP'] %>:<%= ENV['OPENSHIFT_AMQ_AMQP_PORT'] %>"/>
+            <transportConnector name="stomp"        uri="stomp://<%= ENV['OPENSHIFT_AMQ_IP'] %>:<%= ENV['OPENSHIFT_AMQ_STOMP_PORT'] %>"/>
             <!--
-            <transportConnector name="openwire-ssl" uri="ssl://${OPENSHIFT_AMQ_IP}:${OPENSHIFT_AMQ_AMQ_SSL_PORT}"/>
-            <transportConnector name="mqtt-ssl"     uri="mqtt+ssl://${OPENSHIFT_AMQ_IP}:${OPENSHIFT_AMQ_MQTT_SSL_PORT}"/>
-            <transportConnector name="amqp-ssl"     uri="mqtt+ssl://${OPENSHIFT_AMQ_IP}:${OPENSHIFT_AMQ_AMQP_SSL_PORT}"/>
-            <transportConnector name="stomp-ssl"    uri="stomp+ssl://${OPENSHIFT_AMQ_IP}:${OPENSHIFT_AMQ_STOMP_SSL_PORT}"/>
+            <transportConnector name="openwire-ssl" uri="ssl://<%= ENV['OPENSHIFT_AMQ_IP'] %>:<%= ENV['OPENSHIFT_AMQ_OPENWIRE_SSL_PORT'] %>"/>
+            <transportConnector name="mqtt-ssl"     uri="mqtt+ssl://<%= ENV['OPENSHIFT_AMQ_IP'] %>:<%= ENV['OPENSHIFT_AMQ_MQTT_SSL_PORT'] %>"/>
+            <transportConnector name="amqp-ssl"     uri="mqtt+ssl://<%= ENV['OPENSHIFT_AMQ_IP'] %>:<%= ENV['OPENSHIFT_AMQ_AMQP_SSL_PORT'] %>"/>
+            <transportConnector name="stomp-ssl"    uri="stomp+ssl://<%= ENV['OPENSHIFT_AMQ_IP'] %>:<%= ENV['OPENSHIFT_AMQ_STOMP_SSL_PORT'] %>"/>
             -->
         </transportConnectors>
 
