@@ -28,9 +28,9 @@ function setup() {
 
   # Lets create a self generated cert for SSL
   keytool -genkey -storetype JKS -storepass "${OPENSHIFT_AMQ_PASSWORD}" -keystore "${AMQ_KEYSTORE_FILE}" -keypass "${OPENSHIFT_AMQ_PASSWORD}" -alias "${OPENSHIFT_GEAR_DNS}" -keyalg RSA -keysize 4096 -dname "cn=${OPENSHIFT_GEAR_DNS}" -validity 3650
-  echo "" > $AMQ_BROKER_PROPERTIES_FILE
-  echo "keystore.password=${OPENSHIFT_AMQ_PASSWORD}" > $AMQ_BROKER_PROPERTIES_FILE
-  echo "truststore.password=${OPENSHIFT_AMQ_PASSWORD}" > $AMQ_BROKER_PROPERTIES_FILE
+  echo "" >> $AMQ_BROKER_PROPERTIES_FILE
+  echo "keystore.password=${OPENSHIFT_AMQ_PASSWORD}" >> $AMQ_BROKER_PROPERTIES_FILE
+  echo "truststore.password=${OPENSHIFT_AMQ_PASSWORD}" >> $AMQ_BROKER_PROPERTIES_FILE
 
 	client_result ""
 	client_result "AMQ created successfully.  Please make note of these credentials:"
