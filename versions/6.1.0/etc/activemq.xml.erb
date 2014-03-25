@@ -77,9 +77,9 @@
         <sslContext>
             <sslContext 
                 keyStore="<%= ENV['OPENSHIFT_AMQ_DIR'] %>container/etc/keystore.jks" 
-                keyStorePassword="<%= ENV['OPENSHIFT_AMQ_PASSWORD'] %>" 
+                keyStorePassword="${keystore.password}" 
                 trustStore="<%= ENV['OPENSHIFT_AMQ_DIR'] %>container/etc/keystore.jks"  
-                trustStorePassword="<%= ENV['OPENSHIFT_AMQ_PASSWORD'] %>"
+                trustStorePassword="${truststore.password}"
                 />
         </sslContext>   
 

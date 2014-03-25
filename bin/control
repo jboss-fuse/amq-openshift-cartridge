@@ -6,6 +6,7 @@ AMQ_PID_FILE=${OPENSHIFT_AMQ_DIR}container/instances/instance.properties
 AMQ_PASSWD_FILE=${OPENSHIFT_AMQ_DIR}container/etc/passwd
 AMQ_USRPROPS_FILE=${OPENSHIFT_AMQ_DIR}container/etc/users.properties
 AMQ_SYSPROPS_FILE=${OPENSHIFT_AMQ_DIR}container/etc/system.properties
+AMQ_BROKER_PROPERTIES_FILE=${OPENSHIFT_AMQ_DIR}container/etc/org.fusesource.mq.fabric.server-default.cfg
 AMQ_KEYSTORE_FILE=${OPENSHIFT_AMQ_DIR}container/etc/keystore.jks
 SETUP_CHECKER=${OPENSHIFT_AMQ_DIR}container/etc/amq-configured
 
@@ -25,7 +26,11 @@ function setup() {
 	echo "admin=${OPENSHIFT_AMQ_PASSWORD},admin" > $AMQ_USRPROPS_FILE
 	echo "${OPENSHIFT_AMQ_PASSWORD}" > $AMQ_PASSWD_FILE
 
+  # Lets create a self generated cert for SSL
   keytool -genkey -storetype JKS -storepass "${OPENSHIFT_AMQ_PASSWORD}" -keystore "${AMQ_KEYSTORE_FILE}" -keypass "${OPENSHIFT_AMQ_PASSWORD}" -alias "${OPENSHIFT_GEAR_DNS}" -keyalg RSA -keysize 4096 -dname "cn=${OPENSHIFT_GEAR_DNS}" -validity 3650
+  echo "" > $AMQ_BROKER_PROPERTIES_FILE
+  echo "keystore.password=${OPENSHIFT_AMQ_PASSWORD}" > $AMQ_BROKER_PROPERTIES_FILE
+  echo "truststore.password=${OPENSHIFT_AMQ_PASSWORD}" > $AMQ_BROKER_PROPERTIES_FILE
 
 	client_result ""
 	client_result "AMQ created successfully.  Please make note of these credentials:"
