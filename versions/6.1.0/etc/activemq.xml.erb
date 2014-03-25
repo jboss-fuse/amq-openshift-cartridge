@@ -74,28 +74,24 @@
             </systemUsage>
         </systemUsage>
         
-<!--
         <sslContext>
             <sslContext 
-                keyStore="${keystore.file}" 
-                keyStorePassword="${keystore.password}" 
-                trustStore="${truststore.file}"  
-                trustStorePassword="${truststore.password}"
+                keyStore="<%= ENV['OPENSHIFT_AMQ_DIR'] %>container/etc/keystore.jks" 
+                keyStorePassword="<%= ENV['OPENSHIFT_AMQ_PASSWORD'] %>" 
+                trustStore="<%= ENV['OPENSHIFT_AMQ_DIR'] %>container/etc/keystore.jks"  
+                trustStorePassword="<%= ENV['OPENSHIFT_AMQ_PASSWORD'] %>"
                 />
         </sslContext>   
--->    
 
         <transportConnectors>
             <transportConnector name="openwire"     uri="tcp://<%= ENV['OPENSHIFT_AMQ_IP'] %>:<%= ENV['OPENSHIFT_AMQ_OPENWIRE_PORT'] %>"/>
             <transportConnector name="mqtt"         uri="mqtt://<%= ENV['OPENSHIFT_AMQ_IP'] %>:<%= ENV['OPENSHIFT_AMQ_MQTT_PORT'] %>"/>
             <transportConnector name="amqp"         uri="mqtt://<%= ENV['OPENSHIFT_AMQ_IP'] %>:<%= ENV['OPENSHIFT_AMQ_AMQP_PORT'] %>"/>
             <transportConnector name="stomp"        uri="stomp://<%= ENV['OPENSHIFT_AMQ_IP'] %>:<%= ENV['OPENSHIFT_AMQ_STOMP_PORT'] %>"/>
-            <!--
             <transportConnector name="openwire-ssl" uri="ssl://<%= ENV['OPENSHIFT_AMQ_IP'] %>:<%= ENV['OPENSHIFT_AMQ_OPENWIRE_SSL_PORT'] %>"/>
             <transportConnector name="mqtt-ssl"     uri="mqtt+ssl://<%= ENV['OPENSHIFT_AMQ_IP'] %>:<%= ENV['OPENSHIFT_AMQ_MQTT_SSL_PORT'] %>"/>
             <transportConnector name="amqp-ssl"     uri="mqtt+ssl://<%= ENV['OPENSHIFT_AMQ_IP'] %>:<%= ENV['OPENSHIFT_AMQ_AMQP_SSL_PORT'] %>"/>
             <transportConnector name="stomp-ssl"    uri="stomp+ssl://<%= ENV['OPENSHIFT_AMQ_IP'] %>:<%= ENV['OPENSHIFT_AMQ_STOMP_SSL_PORT'] %>"/>
-            -->
         </transportConnectors>
 
     </broker>

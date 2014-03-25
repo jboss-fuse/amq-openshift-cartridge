@@ -1,12 +1,13 @@
 #!/bin/bash
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
-AMQ_BIN_DIR=${OPENSHIFT_AMQ_DIR}/container/bin
-AMQ_PID_FILE=${OPENSHIFT_AMQ_DIR}/container/instances/instance.properties
-AMQ_PASSWD_FILE=${OPENSHIFT_AMQ_DIR}/container/etc/passwd
-AMQ_USRPROPS_FILE=${OPENSHIFT_AMQ_DIR}/container/etc/users.properties
-AMQ_SYSPROPS_FILE=${OPENSHIFT_AMQ_DIR}/container/etc/system.properties
-SETUP_CHECKER=${OPENSHIFT_AMQ_DIR}/container/etc/amq-configured
+AMQ_BIN_DIR=${OPENSHIFT_AMQ_DIR}container/bin
+AMQ_PID_FILE=${OPENSHIFT_AMQ_DIR}container/instances/instance.properties
+AMQ_PASSWD_FILE=${OPENSHIFT_AMQ_DIR}container/etc/passwd
+AMQ_USRPROPS_FILE=${OPENSHIFT_AMQ_DIR}container/etc/users.properties
+AMQ_SYSPROPS_FILE=${OPENSHIFT_AMQ_DIR}container/etc/system.properties
+AMQ_KEYSTORE_FILE=${OPENSHIFT_AMQ_DIR}container/etc/keystore.jks
+SETUP_CHECKER=${OPENSHIFT_AMQ_DIR}container/etc/amq-configured
 
 function setup() {
 	client_result "Setting up JBoss AMQ"
@@ -23,6 +24,8 @@ function setup() {
 	echo "" > $AMQ_USRPROPS_FILE
 	echo "admin=${OPENSHIFT_AMQ_PASSWORD},admin" > $AMQ_USRPROPS_FILE
 	echo "${OPENSHIFT_AMQ_PASSWORD}" > $AMQ_PASSWD_FILE
+
+  keytool -genkey -storetype JKS -storepass "${OPENSHIFT_AMQ_PASSWORD}" -keystore "${AMQ_KEYSTORE_FILE}" -keypass "${OPENSHIFT_AMQ_PASSWORD}" -alias "${OPENSHIFT_GEAR_DNS}" -keyalg RSA -keysize 4096 -dname "cn=${OPENSHIFT_GEAR_DNS}" -validity 3650
 
 	client_result ""
 	client_result "AMQ created successfully.  Please make note of these credentials:"
