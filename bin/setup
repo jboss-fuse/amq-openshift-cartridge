@@ -1,14 +1,23 @@
 #!/bin/bash -eu
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
-version=6.1.0.redhat-328
+version=6.1.0.redhat-379
 
 echo "$version" > "$OPENSHIFT_AMQ_DIR/env/OPENSHIFT_AMQ_VERSION"
 
 #Download and extract the JBoss AMQ Distribution
 mkdir -p $OPENSHIFT_AMQ_DIR
 cd $OPENSHIFT_AMQ_DIR
+
+# First, try to to get the file from the public repo:
 curl --write-out %{http_code} --silent --output jboss-a-mq-${version}.zip \
-  https://repository.jboss.org/nexus/content/repositories/ea/org/jboss/amq/jboss-a-mq/${version}/jboss-a-mq-${version}.zip
+  https://repository.jboss.org/nexus/content/groups/public/org/jboss/amq/jboss-a-mq/${version}/jboss-a-mq-${version}.zip
+  
+# Fallback to getting it from the EA repo.
+if [ ! -f "jboss-a-mq-${version}.zip" ] ; then
+  curl --write-out %{http_code} --silent --output jboss-a-mq-${version}.zip \
+    https://repository.jboss.org/nexus/content/repositories/ea/org/jboss/amq/jboss-a-mq/${version}/jboss-a-mq-${version}.zip
+fi
+
 unzip jboss-a-mq-${version}.zip
 ln -s jboss-a-mq-${version} container
 
