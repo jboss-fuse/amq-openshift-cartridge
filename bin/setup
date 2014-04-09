@@ -9,11 +9,13 @@ mkdir -p $OPENSHIFT_AMQ_DIR
 cd $OPENSHIFT_AMQ_DIR
 
 # First, try to to get the file from the public repo, the fallback to getting it from the EA repo.
-curl --write-out %{http_code} --silent --output jboss-a-mq-${version}.zip \
-  https://repository.jboss.org/nexus/content/groups/public/org/jboss/amq/jboss-a-mq/${version}/jboss-a-mq-${version}.zip ||
-  curl --write-out %{http_code} --silent --output jboss-a-mq-${version}.zip \
+curl -f --silent --output jboss-a-mq-${version}.zip \
+  https://repository.jboss.org/nexus/content/groups/public/org/jboss/amq/jboss-a-mq/${version}/jboss-a-mq-${version}.zip
+if [ $? -ne 0 ]; then  
+  curl -f --silent --output jboss-a-mq-${version}.zip \
     https://repository.jboss.org/nexus/content/repositories/ea/org/jboss/amq/jboss-a-mq/${version}/jboss-a-mq-${version}.zip
-    
+fi
+
 unzip jboss-a-mq-${version}.zip
 ln -s jboss-a-mq-${version} container
 
