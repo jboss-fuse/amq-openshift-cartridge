@@ -1,6 +1,6 @@
 #!/bin/bash -eu
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
-version=6.1.0.redhat-379
+version=6.1.0.redhat-378
 
 echo "$version" > "$OPENSHIFT_AMQ_DIR/env/OPENSHIFT_AMQ_VERSION"
 
