@@ -18,7 +18,7 @@ function setup() {
 		# generate password and setup env vars
 		client_result "Generating password"
 		export OPENSHIFT_AMQ_PASSWORD=$(generate_password)
-		echo OPENSHIFT_AMQ_PASSWORD > ${OPENSHIFT_AMQ_DIR}/env/OPENSHIFT_AMQ_PASSWORD
+                set_env_var OPENSHIFT_AMQ_PASSWORD "${OPENSHIFT_AMQ_PASSWORD}" env
 	fi
 	
 	# Store password
