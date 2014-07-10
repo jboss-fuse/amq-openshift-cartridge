@@ -3,12 +3,12 @@
 
 Name: amq-openshift-cartridge-openshift-enterprise-rpm
 Version: 6.1.0.redhat.385
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: A-MQ cartridge
 Group: Development/Languages
 License: ASL 2.0
 URL: https://www.openshift.com
-Source0: https://github.com/jboss-fuse/amq-openshift-cartridge/archive/openshift-enterprise-rpm-6.1-6.1.0.redhat.385-1.tar.gz
+Source0: https://github.com/jboss-fuse/amq-openshift-cartridge/archive/openshift-enterprise-rpm-6.1-6.1.0.redhat.385-2.tar.gz
 Requires:      rubygem(openshift-origin-node)
 Requires:      openshift-origin-node-util
 
@@ -56,7 +56,7 @@ rm -rf %{buildroot}
 
 
 %changelog
-* Wed Jul 09 2014 Jon Anstey <janstey@gmail.com> 6.1.0.redhat.385-1
+* Wed Jul 09 2014 Jon Anstey <janstey@gmail.com> 6.1.0.redhat.385-2
 - RPM version of the AMQ cart
 
 * Thu Mar 24 2014 Hiram Chirino <hchirino@redhat.com> 0.1.0
