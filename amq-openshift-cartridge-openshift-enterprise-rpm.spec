@@ -59,6 +59,6 @@ rm -rf %{buildroot}
 * Wed Jul 09 2014 Jon Anstey <janstey@gmail.com> 6.1.0.redhat.385-1
 - RPM version of the AMQ cart
 
-* Thu March 24 2014 Hiram Chirino <hchirino@redhat.com> 0.1.0
+* Thu Mar 24 2014 Hiram Chirino <hchirino@redhat.com> 0.1.0
 - Initial implementation based on the AMQ cartridge
 
