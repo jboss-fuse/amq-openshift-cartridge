@@ -55,13 +55,17 @@ function setup() {
 }
 
 function start() {
+    if is_running; then
+        client_result "AMQ cart already started"
+    else
 	if [ ! -f $SETUP_CHECKER ]; then
 		setup
 	else
 		${AMQ_BIN_DIR}/start
 		wait_for_start    
 	fi
-    client_result "Started JBoss AMQ cart"
+        client_result "Started JBoss AMQ cart"
+    fi
 }
 
 function stop() {
@@ -72,6 +76,7 @@ function stop() {
             do
                 if ps -p $PID > /dev/null; then
                     echo "JBoss AMQ has been successfully stopped"
+                    rm $AMQ_PID_FILE
                     break
                 else
                     sleep 3
@@ -122,6 +127,7 @@ function is_running() {
    elif ps -p $PID > /dev/null; then
       return 0
    else
+      rm $AMQ_PID_FILE
       return 1
    fi
 }
