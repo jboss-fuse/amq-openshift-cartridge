@@ -65,18 +65,22 @@ function start() {
 }
 
 function stop() {
-    PID=`cat $AMQ_PID_FILE | grep "item.0.pid" | awk -F " = " '{print $2}'`
-    ${AMQ_BIN_DIR}/stop
-    for i in {1..20};
-        do
-            if ps -p $PID > /dev/null; then
-                echo "JBoss AMQ has been successfully stopped"
-                break
-            else
-                sleep 3
-            fi
-        done
-    client_result "Stopped JBoss AMQ cart"
+    if [ -f $AMQ_PID_FILE ];
+        PID=`cat $AMQ_PID_FILE | grep "item.0.pid" | awk -F " = " '{print $2}'`
+        ${AMQ_BIN_DIR}/stop
+        for i in {1..20};
+            do
+                if ps -p $PID > /dev/null; then
+                    echo "JBoss AMQ has been successfully stopped"
+                    break
+                else
+                    sleep 3
+                fi
+            done
+        client_result "Stopped JBoss AMQ cart"
+    else
+        echo "JBoss AMQ cart was stopped already"
+    fi
 }
 
 function restart() {
