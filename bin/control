@@ -3,73 +3,19 @@ source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
 AMQ_BIN_DIR=${OPENSHIFT_AMQ_DIR}container/bin
 AMQ_PID_FILE=${OPENSHIFT_AMQ_DIR}container/instances/instance.properties
-AMQ_PASSWD_FILE=${OPENSHIFT_AMQ_DIR}container/etc/passwd
-AMQ_USRPROPS_FILE=${OPENSHIFT_AMQ_DIR}container/etc/users.properties
-AMQ_SYSPROPS_FILE=${OPENSHIFT_AMQ_DIR}container/etc/system.properties
-AMQ_BROKER_PROPERTIES_FILE=${OPENSHIFT_AMQ_DIR}container/etc/org.fusesource.mq.fabric.server-default.cfg
-AMQ_KEYSTORE_FILE=${OPENSHIFT_AMQ_DIR}container/etc/keystore.jks
-SETUP_CHECKER=${OPENSHIFT_AMQ_DIR}container/etc/amq-configured
-
-function setup() {
-	client_result "Setting up JBoss AMQ"
-
-	# Retrieve password
-	if [ -z "${OPENSHIFT_AMQ_PASSWORD:-}" ]; then
-		# generate password and setup env vars
-		client_result "Generating password"
-		export OPENSHIFT_AMQ_PASSWORD=$(generate_password)
-                set_env_var OPENSHIFT_AMQ_PASSWORD "${OPENSHIFT_AMQ_PASSWORD}" env
-	fi
-	
-	# Store password
-	echo "" > $AMQ_USRPROPS_FILE
-	echo "admin=${OPENSHIFT_AMQ_PASSWORD},admin" > $AMQ_USRPROPS_FILE
-	echo "${OPENSHIFT_AMQ_PASSWORD}" > $AMQ_PASSWD_FILE
-
-  # Lets create a self generated cert for SSL
-  keytool -genkey -storetype JKS -storepass "${OPENSHIFT_AMQ_PASSWORD}" -keystore "${AMQ_KEYSTORE_FILE}" -keypass "${OPENSHIFT_AMQ_PASSWORD}" -alias "${OPENSHIFT_GEAR_DNS}" -keyalg RSA -keysize 4096 -dname "cn=${OPENSHIFT_GEAR_DNS}" -validity 3650
-  echo "" >> $AMQ_BROKER_PROPERTIES_FILE
-  echo "keystore.password=${OPENSHIFT_AMQ_PASSWORD}" >> $AMQ_BROKER_PROPERTIES_FILE
-  echo "truststore.password=${OPENSHIFT_AMQ_PASSWORD}" >> $AMQ_BROKER_PROPERTIES_FILE
-  CERT=`keytool -exportcert -keystore "${AMQ_KEYSTORE_FILE}" -alias ${OPENSHIFT_GEAR_DNS} -storepass "${OPENSHIFT_AMQ_PASSWORD}" --rfc`
-
-	client_result "AMQ created successfully.  Please make note of these credentials:"
-	client_result ""
-	client_result "   Console URL:        http://${OPENSHIFT_GEAR_DNS}"
-	client_result "   Console User:       admin"
-	client_result "   Console Password:   ${OPENSHIFT_AMQ_PASSWORD}"
-	client_result ""
-  client_result "SSL self signed certificate: "
-  client_result "$CERT"
-
-	# add_domain_env_var "OPENSHIFT_AMQ_DOMAIN_ZOOKEEPER_URL=${OPENSHIFT_AMQ_ZOOKEEPER_URL}"
-	# add_domain_env_var "OPENSHIFT_AMQ_DOMAIN_ZOOKEEPER_PASSWORD=${OPENSHIFT_AMQ_PASSWORD}"
-
-	cart_props "username=admin"
-	cart_props "password=${OPENSHIFT_AMQ_PASSWORD}"
-		
-	${AMQ_BIN_DIR}/start
-	wait_for_start    
-	
-	echo "true" > $SETUP_CHECKER
-}
 
 function start() {
-    if is_running; then
-        client_result "AMQ cart already started"
-    else
-	if [ ! -f $SETUP_CHECKER ]; then
-		setup
-	else
-		${AMQ_BIN_DIR}/start
-		wait_for_start    
-	fi
-        client_result "Started JBoss AMQ cart"
-    fi
+  if is_running; then
+      client_result "AMQ cart already started"
+  else
+    ${AMQ_BIN_DIR}/start
+    wait_for_start    
+    client_result "Started JBoss AMQ cart"
+  fi
 }
 
 function stop() {
-    if [ -f $AMQ_PID_FILE ];
+    if [ -f $AMQ_PID_FILE ]; then
         PID=`cat $AMQ_PID_FILE | grep "item.0.pid" | awk -F " = " '{print $2}'`
         ${AMQ_BIN_DIR}/stop
         for i in {1..20};
@@ -165,6 +111,22 @@ function deploy() {
   echo "deployed"
 }
 
+function threaddump() {
+  echo "Thread dump for A-MQ cartridge"
+
+    if ! is_running; then
+        echo "Application is stopped"
+    elif [ -f "$AMQ_PID_FILE" ]; then
+        pid=`cat $AMQ_PID_FILE | grep "item.0.pid" | awk -F " = " '{print $2}'`
+        jstack -l $pid > $OPENSHIFT_AMQ_LOG_DIR/threaddump.log
+        client_result "Success"
+        client_result ""
+        client_result "The thread dump file will be available via: rhc tail $OPENSHIFT_APP_NAME -g $OPENSHIFT_GEAR_UUID -f ${OPENSHIFT_AMQ_LOG_DIR}threaddump.log -o '-n 250'"
+    else 
+        echo "Failed to locate A-MQ PID File"
+    fi
+}
+
 case "$1" in
   deploy)    deploy ;;
   start)     start ;;
@@ -173,5 +135,6 @@ case "$1" in
   status)    status ;;
   reload)    reload ;;
   tidy)      tidy ;;
+  threaddump)      threaddump ;;
   *)         exit 0
 esac
