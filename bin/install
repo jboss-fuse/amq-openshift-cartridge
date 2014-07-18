@@ -1,6 +1,26 @@
 #!/bin/bash -e
 
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
+BUILD=$(find . -name jboss-a-mq-6.1.0* | sed 's/.*jboss-a-mq-6.1.0.\(.*\).zip/\1/')
+
+AMQ_USRPROPS_FILE=${OPENSHIFT_AMQ_DIR}container/etc/users.properties
+AMQ_BROKER_PROPERTIES_FILE=${OPENSHIFT_AMQ_DIR}container/etc/org.fusesource.mq.fabric.server-default.cfg
+AMQ_PASSWD_FILE=${OPENSHIFT_AMQ_DIR}container/etc/passwd
+AMQ_KEYSTORE_FILE=${OPENSHIFT_AMQ_DIR}container/etc/keystore.jks
+
+case "$1" in
+  -v|--version)
+    version="$2"
+esac
+echo "$version" > "$OPENSHIFT_AMQ_DIR/env/OPENSHIFT_AMQ_VERSION"
+
+#Download and extract the Fuse Fabric Distribution
+mkdir -p $OPENSHIFT_AMQ_DIR
+cd $OPENSHIFT_AMQ_DIR
+
+unzip jboss-a-mq-6.1.0.${BUILD}.zip
+ln -s jboss-a-mq-6.1.0.${BUILD} container
+rm -f jboss-a-mq-6.1.0.${BUILD}.zip
 
 # Copy the version specific files into directory
 cd $OPENSHIFT_AMQ_DIR/versions/6.1.0
@@ -21,3 +41,39 @@ echo "karaf.shutdown.port=${OPENSHIFT_AMQ_SHUTDOWN_PORT}" >> container/etc/confi
 echo "felix.threading.timeout=0" >> container/etc/config.properties
 
 
+client_result "Setting up JBoss AMQ"
+
+# Retrieve password
+if [ -z "${OPENSHIFT_AMQ_PASSWORD:-}" ]; then
+    # generate password and setup env vars
+    client_result "Generating password"
+    export OPENSHIFT_AMQ_PASSWORD=$(generate_password)
+            set_env_var OPENSHIFT_AMQ_PASSWORD "${OPENSHIFT_AMQ_PASSWORD}" env
+fi
+
+# Store password
+echo "" > $AMQ_USRPROPS_FILE
+echo "admin=${OPENSHIFT_AMQ_PASSWORD},admin" > $AMQ_USRPROPS_FILE
+echo "${OPENSHIFT_AMQ_PASSWORD}" > $AMQ_PASSWD_FILE
+
+# Lets create a self generated cert for SSL
+keytool -genkey -storetype JKS -storepass "${OPENSHIFT_AMQ_PASSWORD}" -keystore "${AMQ_KEYSTORE_FILE}" -keypass "${OPENSHIFT_AMQ_PASSWORD}" -alias "${OPENSHIFT_GEAR_DNS}" -keyalg RSA -keysize 4096 -dname "cn=${OPENSHIFT_GEAR_DNS}" -validity 3650
+echo "" >> $AMQ_BROKER_PROPERTIES_FILE
+echo "keystore.password=${OPENSHIFT_AMQ_PASSWORD}" >> $AMQ_BROKER_PROPERTIES_FILE
+echo "truststore.password=${OPENSHIFT_AMQ_PASSWORD}" >> $AMQ_BROKER_PROPERTIES_FILE
+CERT=`keytool -exportcert -keystore "${AMQ_KEYSTORE_FILE}" -alias ${OPENSHIFT_GEAR_DNS} -storepass "${OPENSHIFT_AMQ_PASSWORD}" --rfc`
+
+client_result "AMQ created successfully.  Please make note of these credentials:"
+client_result ""
+client_result "   Console URL:        http://${OPENSHIFT_GEAR_DNS}"
+client_result "   Console User:       admin"
+client_result "   Console Password:   ${OPENSHIFT_AMQ_PASSWORD}"
+client_result ""
+client_result "SSL self signed certificate: "
+client_result "$CERT"
+
+# add_domain_env_var "OPENSHIFT_AMQ_DOMAIN_ZOOKEEPER_URL=${OPENSHIFT_AMQ_ZOOKEEPER_URL}"
+# add_domain_env_var "OPENSHIFT_AMQ_DOMAIN_ZOOKEEPER_PASSWORD=${OPENSHIFT_AMQ_PASSWORD}"
+
+cart_props "username=admin"
+cart_props "password=${OPENSHIFT_AMQ_PASSWORD}"

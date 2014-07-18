@@ -147,3 +147,5 @@ Endpoints:
     - Frontend: 'TLS_PORT_4'
       Backend: ''
 Install-Build-Required: false
+Additional-Control-Actions:
+- threaddump
