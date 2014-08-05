@@ -1,7 +1,7 @@
 %global cartridgedir %{_libexecdir}/openshift/cartridges/amq
 %global frameworkdir %{_libexecdir}/openshift/cartridges/amq
 
-Name: amq-openshift-cartridge-openshift-enterprise-rpm
+Name: openshift-origin-cartridge-amq
 Version: 6.1.0.redhat.385
 Release: 2%{?dist}
 Summary: A-MQ cartridge
@@ -35,7 +35,6 @@ rm -rf %{buildroot}
 
 
 %post
-%{_sbindir}/oo-admin-cartridge --action install --offline --source /usr/libexec/openshift/cartridges/amq
 
 %files
 %defattr(-,root,root,-)
