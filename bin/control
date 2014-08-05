@@ -65,7 +65,7 @@ function start() {
 }
 
 function stop() {
-    if [ -f $AMQ_PID_FILE ];
+    if [ -f $AMQ_PID_FILE ]; then
         PID=`cat $AMQ_PID_FILE | grep "item.0.pid" | awk -F " = " '{print $2}'`
         ${AMQ_BIN_DIR}/stop
         for i in {1..20};
