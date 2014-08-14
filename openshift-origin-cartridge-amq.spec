@@ -23,7 +23,7 @@ A-MQ cartridge for openshift.
 
 
 %prep
-%setup -q
+%setup -q -n amq-openshift-cartridge-openshift-enterprise-rpm-6.1
 
 %build
 
