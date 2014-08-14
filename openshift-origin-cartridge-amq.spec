@@ -31,7 +31,7 @@ A-MQ cartridge for openshift.
 rm -rf %{buildroot}
 mkdir -p %{buildroot}%{cartridgedir}
 cp -r * %{buildroot}%{cartridgedir}/
-
+cp %SOURCE1 %{buildroot}%{cartridgedir}
 
 %clean
 rm -rf %{buildroot}
