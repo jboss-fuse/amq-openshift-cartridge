@@ -1,6 +1,8 @@
 %global cartridgedir %{_libexecdir}/openshift/cartridges/amq
 %global frameworkdir %{_libexecdir}/openshift/cartridges/amq
 
+%global product_build_number 389
+
 Name: openshift-origin-cartridge-amq
 Version: 6.1.0.redhat.385
 Release: 2%{?dist}
@@ -8,7 +10,9 @@ Summary: A-MQ cartridge
 Group: Development/Languages
 License: ASL 2.0
 URL: https://www.openshift.com
-Source0: https://github.com/jboss-fuse/amq-openshift-cartridge/archive/openshift-enterprise-rpm-6.1-6.1.0.redhat.385-2.tar.gz
+Source0: https://github.com/jboss-fuse/amq-openshift-cartridge/archive/openshift-enterprise-rpm-6.1.zip
+Source1: https://repository.jboss.org/nexus/content/groups/ea/org/jboss/amq/jboss-a-mq/6.1.0.redhat-%{product_build_number}/jboss-a-mq-6.1.0.redhat-%{product_build_number}.zip
+
 Requires:      rubygem(openshift-origin-node)
 Requires:      openshift-origin-node-util
 
@@ -20,9 +24,12 @@ A-MQ cartridge for openshift.
 
 
 %prep
-%setup -q
+%setup -q -n amq-openshift-cartridge-openshift-enterprise-rpm-6.1
 
 %build
+unzip %SOURCE1
+rm %SOURCE1
+mv jboss-a-mq-* usr
 
 %install
 rm -rf %{buildroot}
@@ -40,6 +47,7 @@ rm -rf %{buildroot}
 %defattr(-,root,root,-)
 %dir %{cartridgedir}
 %dir %{cartridgedir}/bin
+%dir %{cartridgedir}/usr
 %dir %{cartridgedir}/env
 %dir %{cartridgedir}/metadata
 %dir %{cartridgedir}/versions
