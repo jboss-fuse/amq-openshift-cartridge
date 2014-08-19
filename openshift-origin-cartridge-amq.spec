@@ -4,7 +4,7 @@
 %global product_build_number 389
 
 Name: openshift-origin-cartridge-amq
-Version: 6.1.0.redhat.385
+Version: 6.1.0.redhat.%{product_build_number}
 Release: 2%{?dist}
 Summary: A-MQ cartridge
 Group: Development/Languages
@@ -36,7 +36,6 @@ rm -rf %{buildroot}
 mkdir -p %{buildroot}%{cartridgedir}
 cp -r * %{buildroot}%{cartridgedir}/
 
-
 %clean
 rm -rf %{buildroot}
 
@@ -65,4 +64,3 @@ rm -rf %{buildroot}
 
 * Thu Mar 24 2014 Hiram Chirino <hchirino@redhat.com> 0.1.0
 - Initial implementation based on the AMQ cartridge
-
