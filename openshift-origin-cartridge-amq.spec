@@ -55,7 +55,7 @@ rm -rf %{buildroot}
 
 
 %changelog
-* Thu March 24 2014 Hiram Chirino <hchirino@redhat.com> 0.1.0
+* Thu March 24 2014 Hiram Chirino <hchirino@redhat.com> 0.1.0-1
 - Initial implementation based on the AMQ cartridge
 
 
