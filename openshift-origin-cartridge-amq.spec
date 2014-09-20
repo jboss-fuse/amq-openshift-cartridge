@@ -1,5 +1,5 @@
-%global cartridgedir %{_libexecdir}/openshift/cartridges/v2/amq
-%global frameworkdir %{_libexecdir}/openshift/cartridges/v2/amq
+%global cartridgedir %{_libexecdir}/openshift/cartridges/amq
+%global frameworkdir %{_libexecdir}/openshift/cartridges/amq
 
 Name: openshift-origin-cartridge-amq
 Version: 0.1.0
@@ -8,7 +8,7 @@ Summary: Red Hat JBoss A-MQ cartridge
 Group: Development/Languages
 License: ASL 2.0
 URL: https://www.openshift.com
-Source0: http://mirror.openshift.com/pub/origin-server/source/%{name}/%{name}-%{version}.tar.gz
+Source0: %{name}-%{version}.tar.gz
 Requires:      rubygem(openshift-origin-node)
 Requires:      openshift-origin-node-util
 
@@ -27,10 +27,7 @@ Red Hat JBoss A-MQ cartridge for openshift. (Cartridge Format V2)
 %install
 rm -rf %{buildroot}
 mkdir -p %{buildroot}%{cartridgedir}
-mkdir -p %{buildroot}/%{_sysconfdir}/openshift/cartridges/v2
 cp -r * %{buildroot}%{cartridgedir}/
-ln -s %{cartridgedir}/conf/ %{buildroot}/%{_sysconfdir}/openshift/cartridges/v2/%{name}
-
 
 %clean
 rm -rf %{buildroot}
