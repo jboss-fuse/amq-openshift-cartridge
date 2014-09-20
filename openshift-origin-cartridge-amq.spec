@@ -44,7 +44,6 @@ rm -rf %{buildroot}
 %dir %{cartridgedir}/versions
 %attr(0755,-,-) %{cartridgedir}/bin/
 %attr(0755,-,-) %{frameworkdir}
-%{_sysconfdir}/openshift/cartridges/v2/%{name}
 %{cartridgedir}/metadata/manifest.yml
 %doc %{cartridgedir}/README.md
 %doc %{cartridgedir}/COPYRIGHT
