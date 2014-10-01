@@ -17,7 +17,7 @@ If you prefer to specify your own password (which can be handy in development to
 
     rhc create-app -e OPENSHIFT_AMQ_PASSWORD=admin amq http://is.gd/Q5ihum
 
-You probably want to use a safer password than 'admin' though ;)
+You probably want to use a safer password than 'admin' though ;) Also passwords require a minimum of 6 characters.
 
 If you have a subscription for Openshift that gives you access to other gear sizes, you could run 
 
